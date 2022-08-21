@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ltd.newbee.mall.dao.MenuMapper">
+  <resultMap id="BaseResultMap" type="ltd.newbee.mall.entity.Menu">
+    <!--@mbg.generated-->
+    <!--@Table tb_newbee_mall_menu-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="menu_name" jdbcType="VARCHAR" property="menuName" />
+    <result column="parent_id" jdbcType="BIGINT" property="parentId" />
+    <result column="menu_path" jdbcType="VARCHAR" property="menuPath" />
+    <result column="is_deleted" jdbcType="INTEGER" property="isDeleted" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, menu_name, parent_id, menu_path, is_deleted, create_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    <!--@mbg.generated-->
+    select 
+    <include refid="Base_Column_List" />
+    from tb_newbee_mall_menu
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    <!--@mbg.generated-->
+    delete from tb_newbee_mall_menu
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="ltd.newbee.mall.entity.Menu" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into tb_newbee_mall_menu (menu_name, parent_id, menu_path, 
+      is_deleted, create_time)
+    values (#{menuName,jdbcType=VARCHAR}, #{parentId,jdbcType=BIGINT}, #{menuPath,jdbcType=VARCHAR}, 
+      #{isDeleted,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="ltd.newbee.mall.entity.Menu" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into tb_newbee_mall_menu
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="menuName != null">
+        menu_name,
+      </if>
+      <if test="parentId != null">
+        parent_id,
+      </if>
+      <if test="menuPath != null">
+        menu_path,
+      </if>
+      <if test="isDeleted != null">
+        is_deleted,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="menuName != null">
+        #{menuName,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null">
+        #{parentId,jdbcType=BIGINT},
+      </if>
+      <if test="menuPath != null">
+        #{menuPath,jdbcType=VARCHAR},
+      </if>
+      <if test="isDeleted != null">
+        #{isDeleted,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="ltd.newbee.mall.entity.Menu">
+    <!--@mbg.generated-->
+    update tb_newbee_mall_menu
+    <set>
+      <if test="menuName != null">
+        menu_name = #{menuName,jdbcType=VARCHAR},
+      </if>
+      <if test="parentId != null">
+        parent_id = #{parentId,jdbcType=BIGINT},
+      </if>
+      <if test="menuPath != null">
+        menu_path = #{menuPath,jdbcType=VARCHAR},
+      </if>
+      <if test="isDeleted != null">
+        is_deleted = #{isDeleted,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="ltd.newbee.mall.entity.Menu">
+    <!--@mbg.generated-->
+    update tb_newbee_mall_menu
+    set menu_name = #{menuName,jdbcType=VARCHAR},
+      parent_id = #{parentId,jdbcType=BIGINT},
+      menu_path = #{menuPath,jdbcType=VARCHAR},
+      is_deleted = #{isDeleted,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <select id="findAnnouncementPage" resultType="ltd.newbee.mall.controller.vo.MenuVo">
+    select m.id, m.menu_name menuName, m.parent_id parentId, m.menu_path menuPath, m.is_deleted isDeleted, m.create_time releaseTime,mm.parentName
+    from tb_newbee_mall_menu m
+                 left join (select id, `menu_name` as parentName from tb_newbee_mall_menu where parent_id = 0 and is_deleted = 0) mm
+            on m.parent_id = mm.id
+    <if test="roleId != null ">
+      left join tb_newbee_mall_role_menu rm on m.id = rm.menu_id
+    </if>
+    <where>
+    <if test="menuName != null">
+      and m.menu_name = #{menuName,jdbcType=VARCHAR}
+    </if>
+    <if test="parentId != null">
+      and m.parent_id = #{parentId,jdbcType=BIGINT}
+    </if>
+    <if test="menuPath != null">
+      and m.menu_path = #{menuPath,jdbcType=VARCHAR}
+    </if>
+    <if test="isDeleted != null">
+      and m.is_deleted = #{isDeleted,jdbcType=INTEGER}
+    </if>
+    <if test="createTime != null">
+     and m.create_time = #{createTime,jdbcType=TIMESTAMP}
+    </if>
+      <if test="roleId != null ">
+        and rm.role_id = #{roleId}
+      </if>
+    </where>
+    order by m.create_time desc
+    <if test="start!=null and limit!=null">
+      limit #{start},#{limit}
+    </if>
+  </select>
+
+  <select id="getTotalAnnouncements" resultType="int">
+    select count(id)
+    from tb_newbee_mall_menu
+    <where>
+      <if test="menuName != null">
+        and menu_name = #{menuName,jdbcType=VARCHAR}
+      </if>
+      <if test="parentId != null">
+        and parent_id != #{parentId,jdbcType=BIGINT}
+      </if>
+      <if test="menuPath != null">
+        and menu_path = #{menuPath,jdbcType=VARCHAR}
+      </if>
+      <if test="isDeleted != null">
+        and is_deleted = #{isDeleted,jdbcType=INTEGER}
+      </if>
+      <if test="createTime != null">
+        and create_time = #{createTime,jdbcType=TIMESTAMP}
+      </if>
+    </where>
+  </select>
+
+  <select id="getBestMenu" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List">
+    </include>
+    from tb_newbee_mall_menu
+    where is_deleted = 0
+    <if test="parentIds != null and parentIds.length != 0">
+      and parent_id in
+      <foreach collection="parentIds" item="parentId" open="(" separator="," close=")">
+          #{parentId}
+      </foreach>
+    </if>
+  </select>
+
+  <select id="selectListByRoleId" resultMap="BaseResultMap">
+    select m.*
+    from tb_newbee_mall_menu m left join tb_newbee_mall_role_menu rm on m.id = rm.menu_id
+    where m.is_deleted = 0
+    <if test="roleId != null">
+      and rm.role_id = #{roleId}
+    </if>
+  </select>
+</mapper>

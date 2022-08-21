@@ -1,0 +1,101 @@
+<!-- Copyright (c) 2021-2022  all rights reserved. -->
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>注册</title>
+    <link rel="stylesheet" th:href="@{/mall/css/common.css}">
+    <link rel="stylesheet" th:href="@{/mall/styles/login.css}">
+    <link rel="stylesheet" th:href="@{/mall/styles/header.css}">
+    <link rel="stylesheet" th:href="@{/admin/plugins/sweetalert/sweetalert.css}"/>
+</head>
+<body>
+<div class="top center">
+</div>
+
+<div class="form center">
+    <div class="login">
+        <div class="login_center">
+            <div class="login_top">
+                <div class="left fl">留言</div>
+<!--                <div class="right fr">您已有账号？<a href="login.html" target="_self">请登录</a></div>-->
+                <div class="clear"></div>
+                <div class="under-line center"></div>
+            </div>
+            <form id="registerForm" onsubmit="return false;" action="##">
+                <input type="hidden" id="form" name="form" th:value="${session.newBeeMallUser.userId}">
+                <div class="login_main center">
+                    <div class="login-info">留言内容:&nbsp;<input class="login-info-input" type="text" name="msg"
+                                                             placeholder="请输入留言" id="msg"/>
+                    </div>
+                    <div class="login-info">
+                    </div>
+                    <div class="login-info">
+                    </div>
+                </div>
+                <div class="login_submit">
+                    <input class="submit" type="button" onclick="register()" value="提交">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+<!-- jQuery -->
+<script th:src="@{/admin/plugins/jquery/jquery.min.js}"></script>
+<script th:src="@{/admin/dist/js/public.js}"></script>
+<script th:src="@{/admin/plugins/sweetalert/sweetalert.min.js}"></script>
+<script type="text/javascript">
+
+    //注册按钮onclick事件改为register()即可
+    function register() {
+        var msg = $("#msg").val();
+        let form = $("#form").val();
+        if (!msg) {
+            swal('请输入留言', {
+                icon: "error",
+            });
+            return false;
+        }
+        //验证
+        var params = {
+            "msg":msg,
+            "form":form
+        }
+        var url = '/message/save';
+        $.ajax({
+            type: 'POST',//方法类型
+            url: url,
+            contentType:"application/json",
+            data: JSON.stringify(params),
+            success: function (result) {
+                if (result.resultCode == 200) {
+                    swal({
+                        title: "留言成功",
+                        text: "是否跳转至留言记录?",
+                        icon: "success",
+                        buttons: true,
+                        dangerMode: true,
+                    }).then((flag) => {
+                            if (flag) {
+                                window.location.href = '/message/list';
+                            }
+                        }
+                    )
+                    ;
+                } else {
+                    swal(result.message, {
+                        icon: "error",
+                    });
+                }
+                ;
+            },
+            error: function () {
+                swal("操作失败", {
+                    icon: "error",
+                });
+            }
+        });
+    }
+</script>
+</html>

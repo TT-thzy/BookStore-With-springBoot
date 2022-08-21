@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ltd.newbee.mall.dao.NewbeeMallMessageMapper">
+  <resultMap id="BaseResultMap" type="ltd.newbee.mall.entity.NewbeeMallMessage">
+    <!--@mbg.generated-->
+    <!--@Table tb_newbee_mall_message-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="msg" jdbcType="LONGVARCHAR" property="msg" />
+    <result column="parent_id" jdbcType="BIGINT" property="parentId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="form" jdbcType="BIGINT" property="form" />
+    <result column="from_to" jdbcType="BIGINT" property="fromTo" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, msg, parent_id, create_time, form, from_to
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    <!--@mbg.generated-->
+    select 
+    <include refid="Base_Column_List" />
+    from tb_newbee_mall_message
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    <!--@mbg.generated-->
+    delete from tb_newbee_mall_message
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="ltd.newbee.mall.entity.NewbeeMallMessage" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into tb_newbee_mall_message (msg, parent_id, create_time, 
+      form, from_to)
+    values (#{msg,jdbcType=LONGVARCHAR}, #{parentId,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{form,jdbcType=BIGINT}, #{fromTo,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="ltd.newbee.mall.entity.NewbeeMallMessage" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into tb_newbee_mall_message
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="msg != null">
+        msg,
+      </if>
+      <if test="parentId != null">
+        parent_id,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="form != null">
+        form,
+      </if>
+      <if test="fromTo != null">
+        from_to,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="msg != null">
+        #{msg,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="parentId != null">
+        #{parentId,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="form != null">
+        #{form,jdbcType=BIGINT},
+      </if>
+      <if test="fromTo != null">
+        #{fromTo,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="ltd.newbee.mall.entity.NewbeeMallMessage">
+    <!--@mbg.generated-->
+    update tb_newbee_mall_message
+    <set>
+      <if test="msg != null">
+        msg = #{msg,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="parentId != null">
+        parent_id = #{parentId,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="form != null">
+        form = #{form,jdbcType=BIGINT},
+      </if>
+      <if test="fromTo != null">
+        from_to = #{fromTo,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="ltd.newbee.mall.entity.NewbeeMallMessage">
+    <!--@mbg.generated-->
+    update tb_newbee_mall_message
+    set msg = #{msg,jdbcType=LONGVARCHAR},
+      parent_id = #{parentId,jdbcType=BIGINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      form = #{form,jdbcType=BIGINT},
+      from_to = #{fromTo,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <select id="findAnnouncementPage" resultType="ltd.newbee.mall.controller.vo.MessageVo">
+    select
+    m.id, m.msg, m.parent_id  parentId,m.create_time releaseTime, m.form, m.from_to fromTo,u.nick_name nickName
+    from tb_newbee_mall_message m left join tb_newbee_mall_user u on m.form = u.user_id
+    <where>
+      <if test="msg != null">
+        and m.msg = #{msg,jdbcType=LONGVARCHAR}
+      </if>
+      <if test="parentId != null">
+        and m.parent_id = #{parentId,jdbcType=BIGINT}
+      </if>
+      <if test="createTime != null">
+        and m.create_time = #{createTime,jdbcType=TIMESTAMP}
+      </if>
+      <if test="form != null">
+        and m.form = #{form,jdbcType=BIGINT}
+      </if>
+      <if test="fromTo != null">
+        and m.from_to = #{fromTo,jdbcType=BIGINT}
+      </if>
+    </where>
+    order by m.create_time desc
+    <if test="start!=null and limit!=null">
+      limit #{start},#{limit}
+    </if>
+  </select>
+
+  <select id="getTotalAnnouncements" resultType="int">
+    select count(*)
+    from tb_newbee_mall_message
+    <where>
+      <if test="msg != null">
+        and msg = #{msg,jdbcType=LONGVARCHAR}
+      </if>
+      <if test="parentId != null">
+        and parent_id = #{parentId,jdbcType=BIGINT}
+      </if>
+      <if test="createTime != null">
+        and create_time = #{createTime,jdbcType=TIMESTAMP}
+      </if>
+      <if test="form != null">
+        and form = #{form,jdbcType=BIGINT}
+      </if>
+      <if test="fromTo != null">
+        and from_to = #{fromTo,jdbcType=BIGINT}
+      </if>
+    </where>
+  </select>
+</mapper>

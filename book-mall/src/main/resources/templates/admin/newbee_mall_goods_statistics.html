@@ -1,0 +1,143 @@
+<!-- Copyright (c) 2021-2022  all rights reserved. -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<header th:replace="admin/header::header-fragment">
+</header>
+<style>
+    .ui-jqgrid tr.jqgrow td {
+        white-space: normal !important;
+        height: auto;
+        vertical-align: text-top;
+        padding-top: 2px;
+    }
+
+    a {
+        color: #1baeae;
+        text-decoration: none;
+        background-color: transparent;
+        -webkit-text-decoration-skip: objects;
+    }
+
+    a:hover {
+        color: white;
+        background-color: #1baeae;
+    }
+</style>
+<body class="hold-transition sidebar-mini">
+<div class="wrapper">
+    <!-- 引入页面头header-fragment -->
+    <div th:replace="admin/header::header-nav"></div>
+    <!-- 引入工具栏sidebar-fragment -->
+    <div th:replace="admin/sidebar::sidebar-fragment(${path})"></div>
+    <!-- Content Wrapper. Contains 图标content -->
+    <div class="content-wrapper">
+        <!-- Content Header (图标header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+            </div><!-- /.container-fluid -->
+        </div>
+        <!-- Main content -->
+        <div class="content">
+            <div class="container-fluid">
+                <div class="card card-primary card-outline">
+                    <div class="card-header">
+                        <h3 class="card-title">商品销量统计</h3>
+                    </div> <!-- /.card-body -->
+                    <div class="card-body">
+                        <div class="grid-btn">
+                        </div>
+                        <div id="main" style="width: 600px;height:400px;"></div>
+                    </div><!-- /.card-body -->
+                </div>
+            </div><!-- /.container-fluid -->
+        </div>
+    </div>
+    <!-- /.content-wrapper -->
+    <!-- 引入页脚footer-fragment -->
+    <div th:replace="admin/footer::footer-fragment"></div>
+</div>
+<!-- jQuery -->
+<script th:src="@{/admin/plugins/jquery/jquery.min.js}"></script>
+<!-- Bootstrap 4 -->
+<script th:src="@{/admin/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<!-- AdminLTE App -->
+<script th:src="@{/admin/dist/js/adminlte.min.js}"></script>
+<!-- jqgrid -->
+<script th:src="@{/admin/plugins/jqgrid-5.5.2/jquery.jqGrid.min.js}"></script>
+<script th:src="@{/admin/plugins/jqgrid-5.5.2/grid.locale-cn.js}"></script>
+<!-- sweetalert -->
+<script th:src="@{/admin/plugins/sweetalert/sweetalert.min.js}"></script>
+<script th:src="@{/admin/dist/js/public.js}"></script>
+<!--echarts-->
+<script src="https://cdn.staticfile.org/echarts/4.3.0/echarts.min.js"></script>
+<script type="text/javascript">
+    $(function () {
+       $.ajax({
+           url: "/admin/statistics",
+           type: "get",
+           success: function (data) {
+               initEcharts(data.data);
+           }
+       }) ;
+    });
+
+    // 基于准备好的dom，初始化echarts实例
+    var myChart = echarts.init(document.getElementById('main'));
+
+    function initEcharts(data){
+
+        // 指定图表的配置项和数据
+        var option = {
+
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                }
+            },
+            legend: {},
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            xAxis: {
+                type: 'value',
+                boundaryGap: [0, 0.01]
+            },
+            yAxis: data.yAxis
+            //     {
+            //     type: 'category',
+            //     data: [
+            //         '无印良品 MUJI 修正带',
+            //         '无印良品 MUJI 基础润肤乳霜',
+            //         'MUJI 羽毛 靠垫',
+            //         '无印良品 女式粗棉线条纹长袖T恤',
+            //         'Apple AirPods 配充电盒',
+            //         'Apple AirPods 配充电盒',
+            //         'Apple AirPods 配充电7',
+            //         '小米'
+            //     ]
+            // }
+            ,
+            series: data.series
+            //     [
+            //     {
+            //         name: '2019-09',
+            //         type: 'bar',
+            //         data: [1, 1, 2, 2, 2, 4]
+            //     },
+            //     {
+            //         name: '2019-08',
+            //         type: 'bar',
+            //         data: [1, 1, 2, 2, 2, 4, 9, 10]
+            //     }
+            // ]
+        };
+
+        option && myChart.setOption(option);
+    }
+</script>
+</body>
+</html>

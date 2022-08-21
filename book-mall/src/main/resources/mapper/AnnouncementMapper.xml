@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="ltd.newbee.mall.dao.AnnouncementMapper">
+  <resultMap id="BaseResultMap" type="ltd.newbee.mall.entity.Announcement">
+    <!--@mbg.generated-->
+    <!--@Table tb_newbee_mall_announcement-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="content" jdbcType="LONGVARCHAR" property="content" />
+    <result column="is_deleted" jdbcType="INTEGER" property="isDeleted" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="create_by" jdbcType="BIGINT" property="createBy" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, content, is_deleted, create_time, create_by
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    <!--@mbg.generated-->
+    select 
+    <include refid="Base_Column_List" />
+    from tb_newbee_mall_announcement
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    <!--@mbg.generated-->
+    delete from tb_newbee_mall_announcement
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="ltd.newbee.mall.entity.Announcement" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into tb_newbee_mall_announcement (content, is_deleted, create_time, 
+      create_by)
+    values (#{content,jdbcType=LONGVARCHAR}, #{isDeleted,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{createBy,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="ltd.newbee.mall.entity.Announcement" useGeneratedKeys="true">
+    <!--@mbg.generated-->
+    insert into tb_newbee_mall_announcement
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="content != null">
+        content,
+      </if>
+      <if test="isDeleted != null">
+        is_deleted,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="createBy != null">
+        create_by,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="content != null">
+        #{content,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="isDeleted != null">
+        #{isDeleted,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="ltd.newbee.mall.entity.Announcement">
+    <!--@mbg.generated-->
+    update tb_newbee_mall_announcement
+    <set>
+      <if test="content != null">
+        content = #{content,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="isDeleted != null">
+        is_deleted = #{isDeleted,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createBy != null">
+        create_by = #{createBy,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="ltd.newbee.mall.entity.Announcement">
+    <!--@mbg.generated-->
+    update tb_newbee_mall_announcement
+    set content = #{content,jdbcType=LONGVARCHAR},
+      is_deleted = #{isDeleted,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      create_by = #{createBy,jdbcType=BIGINT}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <select id="findAnnouncementPage" resultType="ltd.newbee.mall.controller.vo.AnnouncementVo">
+    select
+    a.id,a.content,a.is_deleted isDeleted,a.create_by createBy,a.create_time releaseTime,u.nick_name nickName
+    from tb_newbee_mall_announcement a left join tb_newbee_mall_admin_user u on a.create_by = u.admin_user_id
+    <where>
+      <if test="content != null and content != ''">
+        and content = #{content}
+      </if>
+      <if test="isDeleted != null and isDeleted != ''">
+        and is_deleted = #{isDeleted}
+      </if>
+      <if test="startTime != null and startTime.trim() != ''">
+        and create_time &gt; #{startTime}
+      </if>
+      <if test="endTime != null and endTime.trim() != ''">
+        and create_time &lt; #{endTime}
+      </if>
+      <if test="createBy != null and createBy != ''">
+        and create_by = #{createBy}
+      </if>
+    </where>
+    order by create_time desc
+    <if test="start!=null and limit!=null">
+      limit #{start},#{limit}
+    </if>
+  </select>
+
+  <select id="getTotalAnnouncements" resultType="int">
+    select count(id)
+    from tb_newbee_mall_announcement
+    <where>
+      <if test="content != null and content != ''">
+        and content = #{content}
+      </if>
+      <if test="isDeleted != null and isDeleted != ''">
+        and is_deleted = #{isDeleted}
+      </if>
+      <if test="startTime != null and startTime.trim() != ''">
+        and create_time &gt; #{startTime}
+      </if>
+      <if test="endTime != null and endTime.trim() != ''">
+        and create_time &lt; #{endTime}
+      </if>
+      <if test="createBy != null and createBy != ''">
+        and create_by = #{createBy}
+      </if>
+    </where>
+  </select>
+</mapper>
